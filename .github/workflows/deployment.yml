@@ -1,0 +1,25 @@
+name: Deploy to dockerhub
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: unbuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+
+      - name: Login to dockerhub
+        uses: docker/login-actions@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Building image and pushing to dockerhub
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/do-app-test:${{ github.sha }}
